@@ -1,0 +1,22 @@
+# GPT-SoVITS 训练产物（体积大，不入库）
+logs/
+output/
+TEMP/
+GPT_weights*/
+SoVITS_weights*/
+*.pth
+*.ckpt
+
+# MAGI / 大体积二进制
+*.exe
+*.7z
+*.wav
+!config/example.wav
+
+# 系统 / 编辑器
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.log
+*.bak
