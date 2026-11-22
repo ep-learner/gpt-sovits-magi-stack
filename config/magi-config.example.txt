@@ -2,9 +2,12 @@
 # 在 MAGI 设置中填入以下四项（路径不要带引号）：
 
 base_url     = http://127.0.0.1:9880
-参考音频      = D:\GPT-SoVITS-stack\GPT-SoVITS-v2pro-20250604\output\slicer_opt\xiangong\仙工开物.wav_0002204160_0002316800.wav
-提示文本      = 山外则是群雄争霸，百舸争流。
+参考音频      = <仓库父目录>\aiVoiceDep\GPT-SoVITS-v2pro-20250604\output\slicer_opt\<音色名>\<切片文件名>.wav
+提示文本      = <与参考音频实际内容逐字一致的文字>
 语言         = zh
+
+# 说明：正常情况下不需要手填。启动器「切换音色」会自动把当前音色的
+# base_url、参考音频、提示文本写入 MAGI 的 library.json；这里仅作手工排查参考。
 
 # 说明：
 # 1. 参考音频时长 3~6 秒、单人无背景音；提示文本必须与该音频实际内容逐字一致（含标点）。

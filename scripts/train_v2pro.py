@@ -12,9 +12,8 @@ GPT-SoVITS v2Pro 一键训练驱动（无头 / 命令行版）
   这里在 import 前把 gr.Blocks.launch 替换成空函数，即可在不启动服务的情况下
   复用其全部训练逻辑，保证参数、配置、路径与 WebUI 默认值完全一致。
 
-用法（在整合包根目录外任意位置均可）：
-  set GPT_SOVITS_ROOT=D:\GPT-SoVITS-stack\GPT-SoVITS-v2pro-20250604
-  runtime\python.exe scripts\train_v2pro.py --exp xiangong --list output\asr_opt\xiangong.list --wav output\slicer_opt\xiangong
+用法（整合包根目录从 config\_env.py 读取，由 apply-config 生成，无需手设）：
+  runtime\python.exe scripts\train_v2pro.py --exp <实验名> --list <asr .list> --wav <切片目录>
 
 说明：
   * 训练参数全部使用 WebUI 默认值（v2Pro、关 DPO、关 LoRA、8G 卡自动 batch_size）。
@@ -26,7 +25,21 @@ import os
 import sys
 import traceback
 
-DEFAULT_ROOT = r"D:\GPT-SoVITS-stack\GPT-SoVITS-v2pro-20250604"
+def _resolve_default_root():
+    """从仓库 config/_env.py（由 apply-config 生成）读取整合包根目录。"""
+    here = os.path.dirname(os.path.abspath(__file__))
+    repo = os.path.dirname(here)
+    env_py = os.path.join(repo, "config", "_env.py")
+    root = ""
+    if os.path.exists(env_py):
+        ns = {}
+        with open(env_py, encoding="utf-8") as f:
+            exec(f.read(), ns)
+        root = ns.get("GPT_SOVITS_ROOT", "")
+    return os.environ.get("GPT_SOVITS_ROOT", root)
+
+
+DEFAULT_ROOT = _resolve_default_root()
 
 
 def drain(gen, label):
@@ -52,7 +65,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--root", default=os.environ.get("GPT_SOVITS_ROOT", DEFAULT_ROOT),
                     help="GPT-SoVITS 整合包根目录")
-    ap.add_argument("--exp", default="xiangong", help="实验名（权重文件前缀）")
+    ap.add_argument("--exp", default="myvoice", help="实验名（权重文件前缀）")
     ap.add_argument("--list", dest="inp_text", required=True,
                     help="ASR 产出的 .list 标注文件路径")
     ap.add_argument("--wav", dest="inp_wav_dir", required=True,
@@ -63,8 +76,8 @@ def main():
     args = ap.parse_args()
 
     root = os.path.abspath(args.root)
-    if not os.path.isdir(root):
-        sys.exit("整合包根目录不存在: " + root)
+    if not args.root or not os.path.isdir(root):
+        sys.exit("整合包根目录未配置或不存在: %r\n请先编辑 config/stack.yaml 并运行 scripts/apply-config.ps1。" % args.root)
     os.chdir(root)
     sys.path.insert(0, root)
 

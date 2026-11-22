@@ -1,0 +1,55 @@
+# ============================================================
+#  音色工坊 — 唯一配置文件
+#  这里只写“相对位置”，不写死某台电脑的绝对路径，换电脑也能直接用。
+#  改完双击启动器，或运行 scripts\apply-config.ps1 即可让全部脚本生效。
+#  机器私有覆盖写到 config\stack.local.yaml，同名字段会覆盖本文件。
+# ============================================================
+
+# 模型版本（8G 卡用 v2Pro，勿改）
+version: v2Pro
+
+# 依赖根目录：模型、工具和缓存都放这里，不进入 git。
+# 默认与本仓库同级，即 <仓库父目录>\aiVoiceDep，换电脑无需改配置。
+# 若放在别处，只需在 stack.local.yaml 里覆盖这一行。
+dep_root: ..\aiVoiceDep
+
+paths:
+  # 以下相对路径均以 dep_root 为基准；也可直接写绝对路径。
+  # GPT-SoVITS 整合包根目录（必须含 runtime\python.exe、api_v2.py）
+  gpt_sovits_root: GPT-SoVITS-v2pro-20250604
+  # MAGI 阅读器便携版 exe
+  magi_exe: magi\MAGI-portable-2.3.0.exe
+  # MAGI 自身配置文件，位于当前 Windows 用户的 AppData
+  magi_library_json: ${APPDATA}\magi\library.json
+  # 训练素材目录：待训练的 wav/mp3 放这里
+  input_dir: input
+
+cache:
+  # 模型/缓存目录（统一重定向到这里，避免散落到系统盘）
+  huggingface: huggingface
+  modelscope: modelscope
+  numba: numba
+
+server:
+  host: 127.0.0.1
+  port: 9880
+
+magi:
+  # MAGI 调用 TTS 接口时使用的协议版本
+  api_version: v2
+
+# ------------------------------------------------------------
+#  当前生效的音色
+#  apply-config 会把这里同步到：
+#    ① API 端  GPT_SoVITS\configs\tts_infer.yaml 的 custom 段（决定加载哪个权重）
+#    ② MAGI 端 library.json 的 settings.tts（决定用哪段参考音频）
+#  一般不用手改：用启动器「切换音色」或 scripts\switch-voice.ps1 会自动写这里。
+# ------------------------------------------------------------
+current_voice:
+  # 这里不保存任何真实音色信息，避免训练产物被提交。
+  # 实际值由启动器「切换音色」写入不入库的 config\stack.local.yaml。
+  exp_name: ""
+  ref_audio: ""
+  prompt_text: ""
+  text_lang: zh
+  prompt_lang: zh

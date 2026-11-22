@@ -1,4 +1,4 @@
-# GPT-SoVITS 训练产物（体积大，不入库）
+# 音色与训练产物（体积大且含个人声音数据，任何情况下都不入库）
 logs/
 output/
 TEMP/
@@ -6,12 +6,28 @@ GPT_weights*/
 SoVITS_weights*/
 *.pth
 *.ckpt
+*.list
+*.wav
+*.mp3
+*.flac
+library.json
+!config/example.wav
+
+# Agent 本地 spec 与训练记录（可能含音色名、参考文本）
+/.trae/
 
 # MAGI / 大体积二进制
 *.exe
 *.7z
-*.wav
-!config/example.wav
+
+# 依赖目录（模型/工具/缓存，绝不入库）
+/aiVoiceDep/
+
+# 配置层：机器私有覆盖不入库（公共默认在 stack.yaml）
+config/stack.local.yaml
+config/_env.bat
+config/_env.ps1
+config/_env.py
 
 # 系统 / 编辑器
 .DS_Store

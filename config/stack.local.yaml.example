@@ -1,0 +1,17 @@
+# 机器私有覆盖（复制本文件为 stack.local.yaml 后修改，不会被 git 提交）
+# 只写需要覆盖的字段即可，结构与 stack.yaml 一致；其余字段沿用 stack.yaml。
+#
+# 常见用法 1：依赖目录不在默认的“仓库同级\aiVoiceDep”
+# dep_root: D:\your\path\aiVoiceDep
+#
+# 常见用法 2：依赖目录里整合包文件夹名或 MAGI 版本不同
+# paths:
+#   gpt_sovits_root: GPT-SoVITS-v2pro-20250604-nvidia50
+#   magi_exe: magi\MAGI-portable-2.3.1.exe
+#
+# 常见用法 3：端口被占用
+# server:
+#   port: 9881
+
+# current_voice 段由启动器「切换音色」自动写入，包含真实音色名、
+# 参考音频和提示文本。该文件不入库，切勿提交，也不要复制进 README/文档。

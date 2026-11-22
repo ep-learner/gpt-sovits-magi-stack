@@ -1,29 +1,32 @@
 @echo off
 chcp 65001 >nul
-REM ============================================================
-REM  一键启动 GPT-SoVITS API 服务（端口 9880）
-REM  训练完成后，MAGI 阅读器连接的就是这个服务（不是 WebUI）。
-REM ============================================================
+REM GPT-SoVITS API launcher. Values come from config\_env.bat.
+REM Keep this file ASCII-only for compatibility with Windows cmd.exe.
+if not exist "%~dp0..\config\_env.bat" (
+    echo First run: generating configuration...
+    powershell -NoLogo -NoProfile -ExecutionPolicy Bypass -File "%~dp0apply-config.ps1"
+)
+if not exist "%~dp0..\config\_env.bat" (
+    echo [ERROR] Configuration bootstrap failed. Please run scripts\apply-config.ps1 manually.
+    pause
+    exit /b 1
+)
+call "%~dp0..\config\_env.bat"
 
-REM ===== 配置区：如路径/端口变动请修改这里 =====
-set "ROOT=D:\GPT-SoVITS-stack\GPT-SoVITS-v2pro-20250604"
-set "PORT=9880"
-set "NUMBA_CACHE_DIR=%LOCALAPPDATA%\Temp\numba_cache"
-
-REM numba 缓存重定向到可写目录，避免嵌入 Python 下 librosa/numba 缓存报错
 if not exist "%NUMBA_CACHE_DIR%" mkdir "%NUMBA_CACHE_DIR%"
+if not exist "%HF_HOME%" mkdir "%HF_HOME%"
+if not exist "%MODELSCOPE_CACHE%" mkdir "%MODELSCOPE_CACHE%"
 
 cd /d "%ROOT%"
 
-REM 端口占用检查：避免起出两个实例打架
 netstat -ano | findstr ":%PORT% " | findstr LISTENING >nul
 if %errorlevel%==0 (
-    echo [错误] 端口 %PORT% 已被占用。请先关闭占用进程，或修改本文件中的 PORT。
+    echo [ERROR] Port %PORT% is already in use.
     pause
     exit /b 1
 )
 
-echo 启动 GPT-SoVITS API 服务...
-echo 地址: http://127.0.0.1:%PORT%   （看到 "Uvicorn running" 即成功，窗口勿关）
-runtime\python.exe api_v2.py -a 127.0.0.1 -p %PORT% -c GPT_SoVITS/configs/tts_infer.yaml
+echo Starting GPT-SoVITS API at %API_BASE% ...
+echo Keep this window open while using the voice service.
+runtime\python.exe api_v2.py -a %HOST% -p %PORT% -c GPT_SoVITS/configs/tts_infer.yaml
 pause
